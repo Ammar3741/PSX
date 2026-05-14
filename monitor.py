@@ -43,7 +43,9 @@ def check_and_send_alerts(ws_monitor):
     """Check all stocks and send alerts if threshold met"""
     try:
         # Get all current prices from WebSocket cache
-        prices = ws_monitor.get_all_prices()
+        # Copy the dictionary to avoid "dictionary changed size during iteration" errors
+        # when the websocket thread adds new symbols
+        prices = ws_monitor.get_all_prices().copy()
         
         active_stocks = 0
         alerts_sent = 0
@@ -79,6 +81,9 @@ def check_and_send_alerts(ws_monitor):
                 
             # Compare current price to the price at the start of the window
             old_price = tracker['history'][0][1]
+            if old_price <= 0:
+                continue
+                
             change_pct = ((current_price - old_price) / old_price) * 100
             
             # Value Calculation (Current Price * Volume)
@@ -148,8 +153,9 @@ def reset_daily_alerts():
                 or (now_pkt.hour == MARKET_CLOSE_HOUR and now_pkt.minute >= MARKET_CLOSE_MINUTE)
             ) and _last_reset_date != today:
 
-                count = sum(1 for t in stock_tracker.values() if t.get('alerted'))
-                for tracker in stock_tracker.values():
+                # Use list() to avoid dictionary size change exception during thread execution
+                count = sum(1 for t in list(stock_tracker.values()) if t.get('alerted'))
+                for tracker in list(stock_tracker.values()):
                     tracker['alerted']      = False
                     tracker['alerted_date'] = None
 
