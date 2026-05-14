@@ -1,0 +1,41 @@
+# Files to ignore in version control
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+alerts.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Old web UI (deprecated — kept for reference)
+# templates/
+# app.py
+# email_config.py
+# database.py
